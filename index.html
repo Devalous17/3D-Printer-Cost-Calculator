@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f5ed">
+  <meta name="description" content="A friendly Bambu Lab A1 print cost and pricing calculator in Philippine pesos.">
+  <title>Prints & Pesos — A1 Cost Calculator</title>
+  <script>try { if (localStorage.getItem('prints-pesos-theme-v1') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch (_) {}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f8f5ed;
+      --white: #fffefa;
+      --ink: #2d2d2d;
+      --muted: #e5e0d8;
+      --red: #ff4d4d;
+      --blue: #2d5da1;
+      --yellow: #fff3ad;
+      --green: #40734c;
+      --text-muted: #756e66;
+      --line: #d5cfc4;
+      --input-bg: #fff;
+      --chip-bg: #f5f1e9;
+      --secondary-bg: #f3efe8;
+      --note-bg: #f1f8ef;
+      --badge-bg: rgba(255,254,250,.72);
+      --soft-blue: #eaf1fb;
+      --inline-muted: #817970;
+      --paper-dot: #ded8ce;
+      --shadow-color: #2d2d2d;
+      --tape: rgba(229,224,216,.8);
+      --radius-card: 27px 19px 31px 17px / 20px 29px 18px 30px;
+      --radius-input: 15px 11px 17px 12px / 12px 17px 11px 16px;
+      --shadow: 5px 5px 0 var(--ink);
+      font-family: "Patrick Hand", "Comic Sans MS", cursive;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --paper: #242321;
+      --white: #302e2a;
+      --ink: #f5f0e6;
+      --muted: #4a4640;
+      --red: #ca4641;
+      --blue: #9bc1ff;
+      --yellow: #51482f;
+      --green: #a7d8aa;
+      --text-muted: #c3bbaf;
+      --line: #5a554d;
+      --input-bg: #383530;
+      --chip-bg: #3a3731;
+      --secondary-bg: #45413a;
+      --note-bg: #2e3d30;
+      --badge-bg: rgba(48,46,42,.9);
+      --soft-blue: #364356;
+      --inline-muted: #c3bbaf;
+      --paper-dot: #3d3933;
+      --shadow-color: #11100f;
+      --tape: rgba(86,81,72,.9);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background-color: var(--paper);
+      background-image: radial-gradient(var(--paper-dot) 0.75px, transparent 0.75px);
+      background-size: 23px 23px;
+      font-size: 19px;
+      line-height: 1.35;
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    .shell { width: min(1100px, calc(100% - 36px)); margin: 0 auto; padding: 24px 0 48px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 32px; }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+    .brand-mark { width: 43px; height: 43px; display: grid; place-items: center; border: 2.5px solid var(--ink); border-radius: 38% 62% 50% 48%; background: var(--yellow); box-shadow: 3px 3px 0 var(--ink); font-size: 23px; transform: rotate(-7deg); }
+    .brand > span:nth-child(2) { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+    .brand-name { font: 700 22px/1 "Kalam", cursive; }
+    .brand-sub { font-size: 15px; line-height: 1.1; color: var(--text-muted); }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .local-badge { border: 1.5px dashed #8f887f; border-radius: 19px 14px 17px 15px; padding: 7px 12px; color: var(--text-muted); font-size: 16px; background: var(--badge-bg); }
+    .local-badge span { color: var(--green); margin-right: 4px; }
+    .theme-toggle { min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 1.5px solid var(--ink); border-radius: 18px 14px 19px 13px; background: var(--white); padding: 6px 11px; color: var(--ink); cursor: pointer; font-size: 16px; }
+    .theme-toggle:hover { background: var(--yellow); transform: rotate(-1deg); }
+    .theme-toggle:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+    .theme-toggle .theme-icon { font-size: 18px; line-height: 1; }
+    .hero { position: relative; max-width: 720px; margin: 0 auto 25px; text-align: center; }
+    .eyebrow { display: inline-block; color: var(--blue); font-size: 17px; transform: rotate(-2deg); margin-bottom: 7px; }
+    h1,h2,h3,p { margin-top: 0; }
+    h1 { font: 700 clamp(38px, 6vw, 58px)/1.04 "Kalam", cursive; letter-spacing: -1px; margin: 0 0 10px; }
+    h1 .underline { position: relative; white-space: nowrap; }
+    h1 .underline::after { content: ""; position: absolute; height: 6px; border-bottom: 3px solid var(--red); border-radius: 50%; left: 2px; right: 0; bottom: -1px; transform: rotate(-2deg); }
+    .hero p { margin: 0; color: var(--text-muted); font-size: 20px; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(320px, .92fr); gap: 22px; align-items: start; }
+    .card { background: var(--white); border: 2.5px solid var(--ink); border-radius: var(--radius-card); box-shadow: 4px 4px 0 color-mix(in srgb, var(--shadow-color) 28%, transparent); padding: 24px; }
+    .card-title { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 21px; }
+    .card-title h2 { font: 700 26px/1.1 "Kalam", cursive; margin: 0 0 4px; }
+    .card-title p { color: var(--text-muted); font-size: 17px; margin: 0; }
+    .step-tag { flex: 0 0 auto; background: var(--yellow); padding: 5px 11px; border: 1.5px solid var(--ink); border-radius: 12px 17px 11px 16px; transform: rotate(3deg); font-size: 14px; }
+    .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; }
+    .field { min-width: 0; }
+    label { display: block; font-size: 18px; font-weight: 700; margin-bottom: 7px; }
+    .input-wrap { position: relative; }
+    .input-wrap input { width: 100%; height: 54px; border: 2px solid var(--ink); border-radius: var(--radius-input); background: var(--input-bg); padding: 8px 49px 8px 14px; font-size: 23px; color: var(--ink); outline: none; transition: border-color .15s, box-shadow .15s; }
+    .input-wrap input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(45,93,161,.16); }
+    .unit { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 16px; pointer-events: none; }
+    .hint { color: var(--text-muted); font-size: 15px; margin: 5px 0 0; }
+    .divider { border: 0; border-top: 2px dashed var(--line); margin: 22px 0 19px; }
+    .slider-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+    .slider-heading label { margin: 0; }
+    .multiplier-pill { color: var(--blue); font: 700 22px "Kalam", cursive; background: var(--soft-blue); padding: 1px 10px 3px; border-radius: 15px 12px 17px 11px; }
+    .slider-explain { margin: 0 0 12px; color: var(--text-muted); font-size: 15px; }
+    input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--red); cursor: pointer; }
+    .range-ends { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 14px; margin-top: -2px; }
+    .range-ends span:nth-child(2) { color: var(--green); font-weight: 700; }
+    .actions { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+    .button { min-height: 48px; border: 2.5px solid var(--ink); border-radius: 24px 17px 22px 18px / 17px 22px 18px 24px; padding: 9px 17px; font-weight: 700; cursor: pointer; box-shadow: 3px 3px 0 var(--shadow-color); transition: transform .12s, box-shadow .12s, background .12s, color .12s; }
+    .button:hover { transform: translate(2px,2px) rotate(-1deg); box-shadow: 1px 1px 0 var(--shadow-color); background: var(--red); color: white; }
+    .button:active { transform: translate(3px,3px); box-shadow: none; }
+    .button-primary { flex: 1; background: var(--red); color: white; }
+    .button-primary:hover { background: #e63b3b; }
+    .button-secondary { background: var(--secondary-bg); }
+    .button:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+    .result-card { position: sticky; top: 16px; overflow: hidden; }
+    .result-card::before { content: ""; position: absolute; height: 18px; width: 96px; top: 10px; left: calc(50% - 48px); background: var(--tape); transform: rotate(-3deg); }
+    .result-card .card-title { margin-top: 7px; margin-bottom: 15px; }
+    .price-label { color: var(--text-muted); font-size: 17px; text-align: center; margin: 4px 0 0; }
+    .price { text-align: center; font: 700 clamp(43px, 6vw, 58px)/1.12 "Kalam", cursive; margin: 0; color: var(--ink); overflow-wrap: anywhere; }
+    .price-caption { text-align: center; color: var(--text-muted); margin: 0 0 18px; font-size: 15px; }
+    .breakdown { border-top: 2px dashed var(--line); padding-top: 12px; }
+    .row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; font-size: 18px; }
+    .row span:last-child { font-weight: 700; text-align: right; white-space: nowrap; }
+    .row.total { border-top: 1.5px solid var(--line); margin-top: 5px; padding-top: 11px; font-weight: 700; }
+    .profit-note { display: flex; gap: 10px; align-items: flex-start; margin-top: 15px; border: 1.5px dashed #78a283; background: var(--note-bg); padding: 11px 12px; border-radius: 16px 12px 18px 13px; font-size: 15px; }
+    .profit-note b { color: var(--green); }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .info-chip { background: var(--chip-bg); padding: 11px 12px; border-radius: 15px 11px 17px 13px; }
+    .info-chip small { display: block; color: var(--text-muted); font-size: 14px; }
+    .info-chip strong { font: 700 20px "Kalam", cursive; }
+    .settings { margin-top: 18px; }
+    .settings summary { width: fit-content; cursor: pointer; color: var(--blue); text-decoration: underline dashed; text-underline-offset: 4px; font-size: 16px; }
+    .settings-inner { border-top: 1.5px dashed var(--line); margin-top: 12px; padding-top: 13px; }
+    .settings-inner .fields { gap: 12px; }
+    .settings-inner label { font-size: 15px; }
+    .settings-inner input { height: 46px; padding-right: 54px; font-size: 19px; }
+    .saved-quotes { margin-top: 14px; }
+    .saved-quotes summary { width: fit-content; cursor: pointer; color: var(--blue); text-decoration: underline dashed; text-underline-offset: 4px; font-size: 16px; }
+    .quote-list { margin-top: 10px; display: grid; gap: 8px; }
+    .quote-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; border: 1.5px dashed var(--line); border-radius: 14px 18px 12px 16px; background: var(--white); padding: 9px 11px; }
+    .quote-item strong { display: block; font-size: 16px; }
+    .quote-item small { display: block; color: var(--text-muted); font-size: 13px; }
+    .quote-item .quote-total { white-space: nowrap; font: 700 18px "Kalam", cursive; }
+    .save-status { min-height: 20px; margin: 10px 0 0; color: var(--green); font-size: 14px; }
+    .footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 760px; margin: 30px auto 0; color: var(--text-muted); font-size: 15px; }
+    .footer .scribble { font: 700 18px "Kalam", cursive; color: var(--blue); transform: rotate(-2deg); }
+    .toast { position: fixed; z-index: 5; bottom: 18px; left: 50%; transform: translate(-50%, 20px); opacity: 0; background: var(--ink); color: white; padding: 10px 17px; border-radius: 20px 14px 18px 13px; transition: .2s; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 24px, 540px); padding-top: 15px; }
+      .topbar { margin-bottom: 25px; }
+      .brand-name { font-size: 21px; }
+      .brand-sub { font-size: 14px; }
+      .header-actions { gap: 7px; }
+      .local-badge { font-size: 13px; padding: 6px 8px; white-space: nowrap; }
+      .theme-toggle { width: 42px; min-height: 38px; padding: 5px; }
+      .theme-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+      .hero { margin-bottom: 20px; }
+      .hero p { font-size: 18px; }
+      .layout { grid-template-columns: 1fr; gap: 16px; }
+      .card { padding: 19px 17px; }
+      .result-card { position: static; }
+      .price { font-size: 49px; }
+      .footer { margin-top: 23px; font-size: 14px; }
+    }
+    @media (max-width: 390px) {
+      .fields { grid-template-columns: 1fr; gap: 12px; }
+      .card-title h2 { font-size: 23px; }
+      .step-tag { font-size: 12px; }
+      .actions { align-items: stretch; }
+      .button { padding-inline: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Prints and Pesos home">
+        <span class="brand-mark" aria-hidden="true">⌁</span>
+        <span><span class="brand-name">Prints & Pesos</span><span class="brand-sub">A little helper for your A1</span></span>
+      </a>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch color theme"><span class="theme-icon" id="themeIcon" aria-hidden="true">☾</span><span class="theme-label" id="themeLabel">Dark mode</span></button>
+        <div class="local-badge"><span aria-hidden="true">●</span> Saved on this device</div>
+      </div>
+    </header>
+
+    <section class="hero" aria-labelledby="page-title">
+      <span class="eyebrow">✎ your print shop notebook</span>
+      <h1 id="page-title">Make every print <span class="underline">count!</span></h1>
+      <p>Work out your cost, choose your markup, and get a fair asking price in pesos.</p>
+    </section>
+
+    <div class="layout">
+      <section class="card" aria-labelledby="inputs-title">
+        <div class="card-title">
+          <div><h2 id="inputs-title">What are you printing?</h2><p>Pop in the estimates from your slicer.</p></div>
+          <span class="step-tag">Your print ✦</span>
+        </div>
+        <div class="fields">
+          <div class="field">
+            <label for="printName">Print name <span style="font-weight:400;color:var(--inline-muted)">(optional)</span></label>
+            <div class="input-wrap"><input id="printName" type="text" maxlength="48" placeholder="e.g. phone stand" autocomplete="off"></div>
+            <p class="hint">A name helps when you save a quote.</p>
+          </div>
+          <div class="field">
+            <label for="hours">Print time</label>
+            <div class="input-wrap"><input id="hours" type="number" inputmode="decimal" min="0" max="10000" step="0.1" value="4" aria-describedby="timeHint"><span class="unit">hours</span></div>
+            <p class="hint" id="timeHint">Use decimal hours from Bambu Studio.</p>
+          </div>
+          <div class="field">
+            <label for="grams">Filament used</label>
+            <div class="input-wrap"><input id="grams" type="number" inputmode="decimal" min="0" max="100000" step="0.1" value="35" aria-describedby="gramHint"><span class="unit">grams</span></div>
+            <p class="hint" id="gramHint">Include supports and purge waste.</p>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="slider-heading">
+          <label for="multiplier">Your selling price multiplier</label>
+          <span class="multiplier-pill" id="multiplierDisplay">4.0×</span>
+        </div>
+        <p class="slider-explain">This multiplies your cost to suggest a selling price. The usual range is 3×–5×.</p>
+        <input id="multiplier" type="range" min="1" max="8" step="0.1" value="4" aria-label="Selling price multiplier">
+        <div class="range-ends"><span>1× · break even</span><span>3×–5× · common range</span><span>8×</span></div>
+
+        <details class="settings" id="settings">
+          <summary>Adjust your cost assumptions</summary>
+          <div class="settings-inner">
+            <div class="fields">
+              <div class="field"><label for="hourRate">Electricity / machine cost</label><div class="input-wrap"><input id="hourRate" type="number" inputmode="decimal" min="0" max="100000" step="0.01" value="2"><span class="unit">₱ / hour</span></div></div>
+              <div class="field"><label for="gramRate">Filament cost</label><div class="input-wrap"><input id="gramRate" type="number" inputmode="decimal" min="0" max="100000" step="0.01" value="0.70"><span class="unit">₱ / gram</span></div></div>
+            </div>
+            <p class="hint">Starting values from your father's estimate. Changes are remembered on this device.</p>
+          </div>
+        </details>
+
+        <div class="actions">
+          <button class="button button-primary" type="button" id="saveQuote">Save this quote</button>
+          <button class="button button-secondary" type="button" id="resetButton">Reset</button>
+        </div>
+        <p class="save-status" id="saveStatus" aria-live="polite"></p>
+        <details class="saved-quotes" id="savedQuotes">
+          <summary>Saved quotes · <span id="quoteCount">0</span></summary>
+          <div class="quote-list" id="quoteList"><p class="hint">Your saved estimates will show up here.</p></div>
+        </details>
+      </section>
+
+      <aside class="card result-card" aria-labelledby="result-title" aria-live="polite">
+        <div class="card-title">
+          <div><h2 id="result-title">Your price sketch</h2><p id="resultName">A quick estimate for your print.</p></div>
+          <span class="step-tag">PHP ₱</span>
+        </div>
+        <p class="price-label">Suggested selling price</p>
+        <p class="price" id="salePrice">₱0.00</p>
+        <p class="price-caption" id="priceCaption">Based on a 4× multiplier</p>
+        <div class="breakdown">
+          <div class="row"><span>Electricity / machine</span><span id="electricCost">₱0.00</span></div>
+          <div class="row"><span>Filament</span><span id="filamentCost">₱0.00</span></div>
+          <div class="row total"><span>Your estimated cost</span><span id="baseCost">₱0.00</span></div>
+          <div class="row"><span>Estimated earnings*</span><span id="profit">₱0.00</span></div>
+        </div>
+        <div class="profit-note"><span aria-hidden="true">✦</span><span><b id="profitMultiple">4×</b> price leaves <b id="marginPercent">75%</b> of the sale price above your listed costs.</span></div>
+        <div class="info-grid">
+          <div class="info-chip"><small>Power rate used</small><strong id="rateSummary">₱2.00 / hr</strong></div>
+          <div class="info-chip"><small>Filament rate used</small><strong id="gramSummary">₱0.70 / g</strong></div>
+        </div>
+        <p class="hint" style="margin-top:13px">*Before packaging, failed prints, labor, machine wear, and delivery.</p>
+      </aside>
+    </div>
+
+    <footer class="footer"><span>Made for tinkering, tweaking, and making things.</span><span class="scribble">Happy printing! ↗</span></footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const $ = (id) => document.getElementById(id);
+      const ids = ['printName', 'hours', 'grams', 'multiplier', 'hourRate', 'gramRate'];
+      const defaults = { printName: '', hours: '4', grams: '35', multiplier: '4', hourRate: '2', gramRate: '0.70' };
+      const settingsKey = 'prints-pesos-settings-v1';
+      const themeKey = 'prints-pesos-theme-v1';
+      const fmt = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const number = (id, fallback = 0) => {
+        const value = Number($(id).value);
+        return Number.isFinite(value) && value >= 0 ? value : fallback;
+      };
+      const money = (value) => fmt.format(Number.isFinite(value) ? value : 0);
+      let toastTimer;
+
+      function calculate() {
+        const hours = number('hours');
+        const grams = number('grams');
+        const hourRate = number('hourRate');
+        const gramRate = number('gramRate');
+        const multiplier = Math.min(8, Math.max(1, number('multiplier', 4)));
+        const electric = hours * hourRate;
+        const filament = grams * gramRate;
+        const cost = electric + filament;
+        const sale = cost * multiplier;
+        const profit = sale - cost;
+        const name = $('printName').value.trim();
+
+        $('multiplierDisplay').textContent = `${multiplier.toFixed(1)}×`;
+        $('salePrice').textContent = money(sale);
+        $('priceCaption').textContent = `Based on a ${multiplier.toFixed(1)}× multiplier`;
+        $('electricCost').textContent = money(electric);
+        $('filamentCost').textContent = money(filament);
+        $('baseCost').textContent = money(cost);
+        $('profit').textContent = money(profit);
+        $('profitMultiple').textContent = `${multiplier.toFixed(1)}×`;
+        $('marginPercent').textContent = `${cost === 0 ? 0 : Math.round((profit / sale) * 100)}%`;
+        $('rateSummary').textContent = `${money(hourRate)} / hr`;
+        $('gramSummary').textContent = `${money(gramRate)} / g`;
+        $('resultName').textContent = name ? `A quick estimate for ${name}.` : 'A quick estimate for your print.';
+        storeSettings();
+        return { name: name || 'Untitled print', hours, grams, hourRate, gramRate, multiplier, electric, filament, cost, sale, profit };
+      }
+
+      function storeSettings() {
+        try {
+          const data = Object.fromEntries(ids.map(id => [id, $(id).value]));
+          localStorage.setItem(settingsKey, JSON.stringify(data));
+        } catch (_) { /* The calculator still works if browser storage is unavailable. */ }
+      }
+
+      function announce(message) {
+        const toast = $('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+      }
+
+      function setTheme(theme) {
+        const dark = theme === 'dark';
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        $('themeToggle').setAttribute('aria-pressed', String(dark));
+        $('themeToggle').setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+        $('themeIcon').textContent = dark ? '☀' : '☾';
+        $('themeLabel').textContent = dark ? 'Light mode' : 'Dark mode';
+        document.querySelector('meta[name="theme-color"]').content = dark ? '#242321' : '#f8f5ed';
+        try { localStorage.setItem(themeKey, dark ? 'dark' : 'light'); } catch (_) { /* The theme still changes for this visit. */ }
+      }
+
+      function saveQuote() {
+        const q = calculate();
+        const line = `${q.name} — ${q.hours} hr · ${q.grams} g · ${q.multiplier.toFixed(1)}× · ${money(q.sale)} suggested`;
+        try {
+          const key = 'prints-pesos-quotes-v1';
+          const quotes = JSON.parse(localStorage.getItem(key) || '[]');
+          quotes.unshift({ ...q, savedAt: new Date().toISOString() });
+          const recent = quotes.slice(0, 25);
+          localStorage.setItem(key, JSON.stringify(recent));
+          renderQuotes(recent);
+          $('savedQuotes').open = true;
+          $('saveStatus').textContent = `Saved on this device: ${line}`;
+          announce('Quote saved on this device');
+        } catch (_) {
+          $('saveStatus').textContent = 'Could not save in this browser. Your estimate is still shown above.';
+        }
+      }
+
+      function renderQuotes(quotes) {
+        $('quoteCount').textContent = String(quotes.length);
+        const list = $('quoteList');
+        list.replaceChildren();
+        if (!quotes.length) {
+          const empty = document.createElement('p');
+          empty.className = 'hint';
+          empty.textContent = 'Your saved estimates will show up here.';
+          list.append(empty);
+          return;
+        }
+        for (const quote of quotes) {
+          const item = document.createElement('div');
+          item.className = 'quote-item';
+          const description = document.createElement('div');
+          const title = document.createElement('strong');
+          title.textContent = quote.name || 'Untitled print';
+          const meta = document.createElement('small');
+          meta.textContent = `${quote.hours} hr · ${quote.grams} g · ${Number(quote.multiplier).toFixed(1)}×`;
+          const total = document.createElement('span');
+          total.className = 'quote-total';
+          total.textContent = money(Number(quote.sale) || 0);
+          description.append(title, meta);
+          item.append(description, total);
+          list.append(item);
+        }
+      }
+
+      function reset() {
+        for (const id of ids) $(id).value = defaults[id];
+        $('saveStatus').textContent = '';
+        calculate();
+        announce('Calculator reset to your starting values');
+      }
+
+      try {
+        const saved = JSON.parse(localStorage.getItem(settingsKey) || 'null');
+        if (saved) for (const id of ids) if (typeof saved[id] === 'string') $(id).value = saved[id];
+      } catch (_) { /* Use the starting values when stored settings cannot be read. */ }
+      try { renderQuotes(JSON.parse(localStorage.getItem('prints-pesos-quotes-v1') || '[]')); }
+      catch (_) { renderQuotes([]); }
+      for (const id of ids) $(id).addEventListener('input', calculate);
+      $('saveQuote').addEventListener('click', saveQuote);
+      $('resetButton').addEventListener('click', reset);
+      setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+      $('themeToggle').addEventListener('click', () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+      calculate();
+    })();
+  </script>
+</body>
+</html>
