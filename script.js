@@ -7,6 +7,7 @@ try { if (localStorage.getItem('prints-pesos-theme-v1') === 'dark') document.doc
       const settingsKey = 'prints-pesos-settings-v3';
       const previousSettingsKeys = ['prints-pesos-settings-v2', 'prints-pesos-settings-v1'];
       const themeKey = 'prints-pesos-theme-v1';
+      const colorsKey = 'prints-pesos-colors-v1';
       const fmt = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', minimumFractionDigits: 2, maximumFractionDigits: 2 });
       const number = (id, fallback = 0) => {
         const value = Number($(id).value);
@@ -51,6 +52,15 @@ try { if (localStorage.getItem('prints-pesos-theme-v1') === 'dark') document.doc
         } catch (_) { /* The calculator still works if browser storage is unavailable. */ }
       }
 
+      function selectedColors() {
+        return [...document.querySelectorAll('input[name="filamentColor"]:checked')].map(input => input.value);
+      }
+
+      function storeColors() {
+        try { localStorage.setItem(colorsKey, JSON.stringify(selectedColors())); }
+        catch (_) { /* Color selection still works for this visit. */ }
+      }
+
       function announce(message) {
         const toast = $('toast');
         toast.textContent = message;
@@ -71,8 +81,9 @@ try { if (localStorage.getItem('prints-pesos-theme-v1') === 'dark') document.doc
       }
 
       function saveQuote() {
-        const q = calculate();
-        const line = `${q.name} — ${q.hours} hr · ${q.grams} g · ${q.multiplier.toFixed(1)}× · ${money(q.sale)} suggested`;
+        const q = { ...calculate(), colors: selectedColors() };
+        const colorSummary = q.colors.length ? ` · ${q.colors.join(', ')}` : '';
+        const line = `${q.name} — ${q.hours} hr · ${q.grams} g${colorSummary} · ${q.multiplier.toFixed(1)}× · ${money(q.sale)} suggested`;
         try {
           const key = 'prints-pesos-quotes-v1';
           const quotes = JSON.parse(localStorage.getItem(key) || '[]');
@@ -106,7 +117,8 @@ try { if (localStorage.getItem('prints-pesos-theme-v1') === 'dark') document.doc
           const title = document.createElement('strong');
           title.textContent = quote.name || 'Untitled print';
           const meta = document.createElement('small');
-          meta.textContent = `${quote.hours} hr · ${quote.grams} g · ${Number(quote.multiplier).toFixed(1)}×`;
+          const colors = Array.isArray(quote.colors) && quote.colors.length ? ` · ${quote.colors.join(', ')}` : '';
+          meta.textContent = `${quote.hours} hr · ${quote.grams} g${colors} · ${Number(quote.multiplier).toFixed(1)}×`;
           const total = document.createElement('span');
           total.className = 'quote-total';
           total.textContent = money(Number(quote.sale) || 0);
@@ -133,9 +145,18 @@ try { if (localStorage.getItem('prints-pesos-theme-v1') === 'dark') document.doc
           if (['0.70', '2'].includes(saved.gramRate)) $('gramRate').value = defaults.gramRate;
         }
       } catch (_) { /* Use the starting values when stored settings cannot be read. */ }
+      try {
+        const savedColors = JSON.parse(localStorage.getItem(colorsKey) || '[]');
+        if (Array.isArray(savedColors)) {
+          for (const input of document.querySelectorAll('input[name="filamentColor"]')) {
+            input.checked = savedColors.includes(input.value);
+          }
+        }
+      } catch (_) { /* Start with no colors selected if browser storage is unavailable. */ }
       try { renderQuotes(JSON.parse(localStorage.getItem('prints-pesos-quotes-v1') || '[]')); }
       catch (_) { renderQuotes([]); }
       for (const id of ids) $(id).addEventListener('input', calculate);
+      for (const input of document.querySelectorAll('input[name="filamentColor"]')) input.addEventListener('change', storeColors);
       $('saveQuote').addEventListener('click', saveQuote);
       $('resetButton').addEventListener('click', reset);
       setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');

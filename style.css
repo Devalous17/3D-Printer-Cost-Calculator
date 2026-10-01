@@ -91,6 +91,23 @@
     .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; }
     .field { min-width: 0; }
     label { display: block; font-size: 18px; font-weight: 700; margin-bottom: 7px; }
+    .color-fieldset { min-width: 0; grid-column: 1 / -1; margin: 0; padding: 0; border: 0; }
+    .color-fieldset legend { padding: 0; font-size: 18px; font-weight: 700; margin-bottom: 3px; }
+    .color-help { color: var(--text-muted); font-size: 15px; margin: 0 0 9px; }
+    .color-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .color-choice { position: relative; display: inline-flex; margin: 0; cursor: pointer; }
+    .color-choice input { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .color-chip { min-height: 42px; display: inline-flex; align-items: center; gap: 7px; border: 1.5px dashed var(--line); border-radius: 18px 14px 17px 13px; background: var(--chip-bg); padding: 7px 11px; transition: background .12s, border-color .12s, transform .12s; }
+    .color-chip:hover { transform: translateY(-1px); }
+    .color-dot { width: 16px; height: 16px; display: inline-block; flex: 0 0 16px; border: 1px solid rgba(45,45,45,.45); border-radius: 50%; }
+    .dot-black { background: #242321; }
+    .dot-white { background: #fff; }
+    .dot-grey { background: #888; }
+    .dot-pink { background: #ed81b3; }
+    .dot-red { background: #e84646; }
+    .color-choice input:checked + .color-chip { border-style: solid; border-color: var(--blue); background: var(--soft-blue); }
+    .color-choice input:checked + .color-chip::after { content: "✓"; color: var(--blue); font-weight: 700; }
+    .color-choice input:focus-visible + .color-chip { outline: 3px solid var(--blue); outline-offset: 2px; }
     .input-wrap { position: relative; }
     .input-wrap input { width: 100%; height: 54px; border: 2px solid var(--ink); border-radius: var(--radius-input); background: var(--input-bg); padding: 8px 49px 8px 14px; font-size: 23px; color: var(--ink); outline: none; transition: border-color .15s, box-shadow .15s; }
     .input-wrap input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(45,93,161,.16); }
@@ -101,6 +118,7 @@
     .slider-heading label { margin: 0; }
     .multiplier-pill { color: var(--blue); font: 700 22px "Kalam", cursive; background: var(--soft-blue); padding: 1px 10px 3px; border-radius: 15px 12px 17px 11px; }
     .slider-explain { margin: 0 0 12px; color: var(--text-muted); font-size: 15px; }
+    .slider-disclaimer { margin: -6px 0 8px; color: var(--text-muted); font-size: 14px; line-height: 1.3; }
     input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--red); cursor: pointer; }
     .range-ends { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 14px; margin-top: -2px; }
     .range-ends span:nth-child(2) { color: var(--green); font-weight: 700; }
@@ -142,7 +160,10 @@
     .quote-item small { display: block; color: var(--text-muted); font-size: 13px; }
     .quote-item .quote-total { white-space: nowrap; font: 700 18px "Kalam", cursive; }
     .save-status { min-height: 20px; margin: 10px 0 0; color: var(--green); font-size: 14px; }
-    .footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 760px; margin: 30px auto 0; color: var(--text-muted); font-size: 15px; }
+    .footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; max-width: 760px; margin: 30px auto 0; color: var(--text-muted); font-size: 15px; }
+    .footer-copy { display: grid; gap: 2px; }
+    .footer-copy strong { color: var(--ink); }
+    .footer-copy a { color: var(--blue); text-underline-offset: 3px; }
     .footer .scribble { font: 700 18px "Kalam", cursive; color: var(--blue); transform: rotate(-2deg); }
     .toast { position: fixed; z-index: 5; bottom: 18px; left: 50%; transform: translate(-50%, 20px); opacity: 0; background: var(--ink); color: white; padding: 10px 17px; border-radius: 20px 14px 18px 13px; transition: .2s; pointer-events: none; }
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
