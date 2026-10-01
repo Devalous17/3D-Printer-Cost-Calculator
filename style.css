@@ -95,6 +95,7 @@
     .color-fieldset legend { padding: 0; font-size: 18px; font-weight: 700; margin-bottom: 3px; }
     .color-help { color: var(--text-muted); font-size: 15px; margin: 0 0 9px; }
     .color-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .color-coming { margin: 8px 0 0; color: var(--blue); font: 700 15px "Kalam", cursive; transform: rotate(-1deg); width: fit-content; }
     .color-choice { position: relative; display: inline-flex; margin: 0; cursor: pointer; }
     .color-choice input { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
     .color-chip { min-height: 42px; display: inline-flex; align-items: center; gap: 7px; border: 1.5px dashed var(--line); border-radius: 18px 14px 17px 13px; background: var(--chip-bg); padding: 7px 11px; transition: background .12s, border-color .12s, transform .12s; }
@@ -117,7 +118,6 @@
     .slider-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
     .slider-heading label { margin: 0; }
     .multiplier-pill { color: var(--blue); font: 700 22px "Kalam", cursive; background: var(--soft-blue); padding: 1px 10px 3px; border-radius: 15px 12px 17px 11px; }
-    .slider-explain { margin: 0 0 12px; color: var(--text-muted); font-size: 15px; }
     .slider-disclaimer { margin: -6px 0 8px; color: var(--text-muted); font-size: 14px; line-height: 1.3; }
     input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--red); cursor: pointer; }
     .range-ends { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 14px; margin-top: -2px; }

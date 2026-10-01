@@ -54,7 +54,7 @@
             <p class="hint" id="gramHint">Include supports and purge waste.</p>
           </div>
           <fieldset class="color-fieldset">
-            <legend>Which colors do you want?</legend>
+            <legend>Available colors for printing</legend>
             <p class="color-help">Choose all that apply. Color selection won’t affect the price.</p>
             <div class="color-options">
               <label class="color-choice"><input type="checkbox" name="filamentColor" value="Black"><span class="color-chip"><span class="color-dot dot-black"></span>Black</span></label>
@@ -63,6 +63,7 @@
               <label class="color-choice"><input type="checkbox" name="filamentColor" value="Pink"><span class="color-chip"><span class="color-dot dot-pink"></span>Pink</span></label>
               <label class="color-choice"><input type="checkbox" name="filamentColor" value="Red"><span class="color-chip"><span class="color-dot dot-red"></span>Red</span></label>
             </div>
+            <p class="color-coming">More colors coming soon! ✦</p>
           </fieldset>
         </div>
 
@@ -72,7 +73,6 @@
           <label for="multiplier">Your selling price multiplier</label>
           <span class="multiplier-pill" id="multiplierDisplay">4.0×</span>
         </div>
-        <p class="slider-explain">This multiplies your cost to suggest a selling price. The usual range is 3×–5×.</p>
         <p class="slider-disclaimer">A multiplier is only a rough guide and won’t fit every print. Consider complexity, finishing time, demand, and what customers are willing to pay.</p>
         <input id="multiplier" type="range" min="1" max="8" step="0.1" value="4" aria-label="Selling price multiplier">
         <div class="range-ends"><span>1× · break even</span><span>3×–5× · common range</span><span>8×</span></div>
