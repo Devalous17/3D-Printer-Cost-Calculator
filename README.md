@@ -1,4 +1,4 @@
-# Prints & Pesos
+# 3D Printing Goat 🐐
 
 A lightweight print-cost and pricing calculator for the Bambu Lab A1. It uses Philippine pesos (PHP) and works as a static website with no build step.
 
