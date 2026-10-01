@@ -3,9 +3,9 @@ try { if (localStorage.getItem('prints-pesos-theme-v1') === 'dark') document.doc
 (() => {
       const $ = (id) => document.getElementById(id);
       const ids = ['printName', 'hours', 'grams', 'multiplier', 'hourRate', 'gramRate'];
-      const defaults = { printName: '', hours: '4', grams: '35', multiplier: '4', hourRate: '25', gramRate: '2' };
-      const settingsKey = 'prints-pesos-settings-v2';
-      const previousSettingsKey = 'prints-pesos-settings-v1';
+      const defaults = { printName: '', hours: '4', grams: '35', multiplier: '4', hourRate: '10', gramRate: '1.5' };
+      const settingsKey = 'prints-pesos-settings-v3';
+      const previousSettingsKeys = ['prints-pesos-settings-v2', 'prints-pesos-settings-v1'];
       const themeKey = 'prints-pesos-theme-v1';
       const fmt = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', minimumFractionDigits: 2, maximumFractionDigits: 2 });
       const number = (id, fallback = 0) => {
@@ -125,11 +125,12 @@ try { if (localStorage.getItem('prints-pesos-theme-v1') === 'dark') document.doc
 
       try {
         const currentSettings = localStorage.getItem(settingsKey);
-        const saved = JSON.parse(currentSettings || localStorage.getItem(previousSettingsKey) || 'null');
+        const previousSettings = previousSettingsKeys.map(key => localStorage.getItem(key)).find(Boolean);
+        const saved = JSON.parse(currentSettings || previousSettings || 'null');
         if (saved) for (const id of ids) if (typeof saved[id] === 'string') $(id).value = saved[id];
         if (saved && !currentSettings) {
-          if (saved.hourRate === '2') $('hourRate').value = defaults.hourRate;
-          if (saved.gramRate === '0.70') $('gramRate').value = defaults.gramRate;
+          if (['2', '25'].includes(saved.hourRate)) $('hourRate').value = defaults.hourRate;
+          if (['0.70', '2'].includes(saved.gramRate)) $('gramRate').value = defaults.gramRate;
         }
       } catch (_) { /* Use the starting values when stored settings cannot be read. */ }
       try { renderQuotes(JSON.parse(localStorage.getItem('prints-pesos-quotes-v1') || '[]')); }
