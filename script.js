@@ -3,8 +3,9 @@ try { if (localStorage.getItem('prints-pesos-theme-v1') === 'dark') document.doc
 (() => {
       const $ = (id) => document.getElementById(id);
       const ids = ['printName', 'hours', 'grams', 'multiplier', 'hourRate', 'gramRate'];
-      const defaults = { printName: '', hours: '4', grams: '35', multiplier: '4', hourRate: '2', gramRate: '0.70' };
-      const settingsKey = 'prints-pesos-settings-v1';
+      const defaults = { printName: '', hours: '4', grams: '35', multiplier: '4', hourRate: '25', gramRate: '2' };
+      const settingsKey = 'prints-pesos-settings-v2';
+      const previousSettingsKey = 'prints-pesos-settings-v1';
       const themeKey = 'prints-pesos-theme-v1';
       const fmt = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', minimumFractionDigits: 2, maximumFractionDigits: 2 });
       const number = (id, fallback = 0) => {
@@ -123,8 +124,13 @@ try { if (localStorage.getItem('prints-pesos-theme-v1') === 'dark') document.doc
       }
 
       try {
-        const saved = JSON.parse(localStorage.getItem(settingsKey) || 'null');
+        const currentSettings = localStorage.getItem(settingsKey);
+        const saved = JSON.parse(currentSettings || localStorage.getItem(previousSettingsKey) || 'null');
         if (saved) for (const id of ids) if (typeof saved[id] === 'string') $(id).value = saved[id];
+        if (saved && !currentSettings) {
+          if (saved.hourRate === '2') $('hourRate').value = defaults.hourRate;
+          if (saved.gramRate === '0.70') $('gramRate').value = defaults.gramRate;
+        }
       } catch (_) { /* Use the starting values when stored settings cannot be read. */ }
       try { renderQuotes(JSON.parse(localStorage.getItem('prints-pesos-quotes-v1') || '[]')); }
       catch (_) { renderQuotes([]); }
